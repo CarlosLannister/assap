@@ -2,8 +2,8 @@
   .section
     video(@play="onPlay", id="camera", width="270", height="150", preload, autoplay, loop, muted)/
     canvas(id="canvas", width="270", height="150")/
-    input(id="photo", type="file", style="-webkit-app-region: no-drag; z-index: 99999999999;")/
     img(id="img", src="")/
+    input(@change="onChange", id="photo", type="file", style="-webkit-app-region: no-drag; z-index: 99999999999; position: absolute; margin-top: 500px;")/
 </template>
 
 <script>
@@ -43,10 +43,7 @@
         if(videoEl.paused || videoEl.ended)
           return setTimeout(() => this.onPlay())
 
-        faceapi
-          .detectSingleFace(imgEl)
-          .withFaceLandmarks()
-          .withFaceDescriptors()
+        faceapi.detectSingleFace(imgEl)
           .then(userDetection => {
             if (userDetection.length > 0) {
               faceMatcher = new faceapi.FaceMatcher(userDetection)
@@ -64,20 +61,39 @@
                       faceMatcher.findBestMatch(descriptor).toString()
                     )
                   })
-                  faceapi.drawDetection(canvas, boxesWithText, { withScore: true })
+                  faceapi.drawDetection(canvas, detectionsForSize, { withScore: true })
                 })
                 .catch((error) => {
                   console.log('Error', error);
                 })
             }
           })
-
-
+          .catch(error => console.log(error))
 
       setTimeout(() => this.onPlay())
-      }
-    }
+      },
+      onChange() {
+        const photoEl = document.getElementById('photo')
+        console.log('Entra en el onload');
+        console.log(photo);
+        const imgFile = photo.files[0]
+        faceapi.bufferToImage(imgFile).then(img => {
+          faceapi.detectSingleFace(imgEl)
+            .then(userDetection => {
+              console.log(userDetection);
+              if (userDetection.length > 0) {
+                faceMatcher = new faceapi.FaceMatcher(userDetection)
+                const labels = faceMatcher.labeledDescriptors.map(ld => ld.label)
+                console.log('labels', labels);
+              }
+            })
+            .catch(err => console.error(err))
+        })
+        .catch(err => console.error(err))
+      },
   }
+
+}
 </script>
 
 <style lang="sass">
