@@ -96,7 +96,52 @@ div
                 .detectAllFaces(img)
                 .withFaceLandmarks()
                 .withFaceDescriptors()
-                .then((results) => console.log('results', results))
+                .then((results) => {
+                  // console.log('results', results)
+
+                  if(results && results.length > 0) {
+                    // Write
+                    // const json = JSON.stringify(results.map(res => res.descriptor ));
+                    // const fs = require('fs');
+                    // fs.writeFileSync('./descriptor.json',json)
+                    // console.log('Saved!');
+
+                    // Read
+                    const fs = require('fs');
+                    const str = fs.readFileSync('./descriptor.json')
+                    let obj = new Array(Object.values(JSON.parse(str.toString())))
+                    let arrayDescriptor = new Array(obj[0].length)
+
+                    let i = 0
+                    obj[0].forEach((entry) => {
+                      arrayDescriptor[i++] = new Float32Array(Object.values(entry))
+                    });
+                    // console.log('arrayDescriptor', arrayDescriptor);
+                    const faceMatcher = new faceapi.FaceMatcher(arrayDescriptor)
+
+                    results.forEach(({ detection, descriptor }) => {
+                      const label = faceMatcher.findBestMatch(descriptor).toString()
+                      console.log('label', label);
+                      const options = { label }
+                      const drawBox = new faceapi.draw.DrawBox(detection.box, options)
+                      drawBox.draw(canvas)
+                    })
+
+                    // console.log('faceMatcher', faceMatcher._labeledDescriptors[0]._label);
+
+
+
+
+
+
+                  }
+                  // results.forEach(({ detection, descriptor }) => {
+                  //   const label = faceMatcher.findBestMatch(descriptor).toString()
+                  //   const options = { label }
+                  //   const drawBox = new faceapi.draw.DrawBox(detection.box, options)
+                  //   drawBox.draw(canvas)
+                  // })
+                })
             } else if(detections.length>1) {
               action.executeAction()
             }
