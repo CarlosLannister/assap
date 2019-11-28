@@ -8,6 +8,8 @@ import App from './App.vue'
 import './assets/styles.sass'
 import router from './router'
 import {setAction, setModelUrl} from "@/utils/configuration";
+import { Tabs } from 'buefy'
+Vue.use(Tabs)
 
 library.add(faStopCircle, faPlayCircle, faTimesCircle, faTimes, faBars, faUserSecret)
 
