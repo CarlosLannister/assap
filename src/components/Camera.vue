@@ -14,6 +14,7 @@ div
         SettingNav/
     .play(v-if="!isRecording")
       font-awesome-icon.resume(:icon="['fas', 'play-circle']", @click="toggleRecord()")/
+    router-link(:to="{ name: 'new'}") Otra vista
 </template>
 
 <script>
@@ -67,6 +68,9 @@ div
       faceapi.loadTinyFaceDetectorModel(model_url)
         .then(() => console.log('loaded tiny model!')) // eslint-disable-line no-console
         .catch((error) => console.error(error)) // eslint-disable-line no-console
+      faceapi.loadFaceLandmarkModel(model_url)
+        .then(() => console.log('loaded landmarks!')) // eslint-disable-line no-console
+        .catch((error) => console.error(error))
     },
     created(){
       globalShortcut.register('CommandOrControl+H', () => {
