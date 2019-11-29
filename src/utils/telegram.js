@@ -1,4 +1,4 @@
-const Telegraf = require('telegraf')
+const TelegramBot = require('node-telegram-bot-api');
 
 /**
  * Sends Telegram notification.
@@ -8,10 +8,10 @@ const Telegraf = require('telegraf')
  * @param {String} msg - Message to send
  */
 export function sendTelegram (token, chat_id, msg){
-  const bot = new Telegraf(token)
+  const bot = new TelegramBot(token, {polling: true});
 
   try {
-    bot.telegram.sendMessage(chat_id, msg);
+    bot.sendMessage(chat_id, msg);
   } catch(e) {
     console.log(e);
   }

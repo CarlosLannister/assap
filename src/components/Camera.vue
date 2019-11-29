@@ -11,8 +11,10 @@ div
 <script>
   import * as faceapi from 'face-api.js';
   import {Action} from "@/utils/actions";
+  import {sendSlack} from "@/utils/slack";
+  import {sendTelegram} from "@/utils/telegram";
   const { globalShortcut } = require('electron').remote
-  import {getConfiguration} from "@/utils/configuration";
+  import {getConfiguration,getSlackURL,getSlackActive,getTelegramConfig,getTelegramActive} from "@/utils/configuration";
   const action = new Action();
 
   faceapi.env.monkeyPatch({
@@ -95,6 +97,13 @@ div
             }
             if(trueDetectionsNumber>1){
                action.executeAction()
+               if (getSlackActive()) {
+                 sendSlack(getSlackURL(),"Be careful someone can be spying you!")
+               }
+               if (getTelegramActive()) {
+                 var telegramConfig = getTelegramConfig()
+                 sendTelegram(telegramConfig.token,telegramConfig.chatId,"Be careful someone can be spying you!")
+               }
             }
             canvas.width = videoEl.width
             canvas.height = videoEl.height
