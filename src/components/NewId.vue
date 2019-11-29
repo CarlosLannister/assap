@@ -117,7 +117,10 @@ div
                       arrayDescriptor[i++] = new Float32Array(Object.values(entry))
                     });
                     // console.log('arrayDescriptor', arrayDescriptor);
-                    const faceMatcher = new faceapi.FaceMatcher(arrayDescriptor)
+
+                    const labeledDescriptors = new faceapi.LabeledFaceDescriptors('jose', arrayDescriptor)
+
+                    const faceMatcher = new faceapi.FaceMatcher(labeledDescriptors)
 
                     results.forEach(({ detection, descriptor }) => {
                       const label = faceMatcher.findBestMatch(descriptor).toString()
